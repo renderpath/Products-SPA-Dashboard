@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
+import { toggleFavorite } from "../../features/favorites/favoritesSlice";
 import { useGetProductsQuery } from "../../shared/api/dummyJsonApi";
+import { useAppDispatch } from "../../shared/hooks/useAppDispatch";
+import { useAppSelector } from "../../shared/hooks/useAppSelector";
 
 export function ProductsPage() {
+    const dispatch = useAppDispatch();
+    const favoriteIds = useAppSelector((state) => state.favorites.ids);
+
     const { data, isLoading, isError } = useGetProductsQuery();
 
     if (isLoading) {
@@ -28,32 +34,55 @@ export function ProductsPage() {
             </div>
 
             <div className="products-grid">
-                {data?.products.map((product) => (
-                    <article className="product-card" key={product.id}>
-                        <Link to={`/products/${product.id}`} className="product-card__image-wrapper">
-                            <img
-                                className="product-card__image"
-                                src={product.thumbnail}
-                                alt={product.title}
-                            />
-                        </Link>
+                {data?.products.map((product) => {
+                    const isFavorite = favoriteIds.includes(product.id);
 
-                        <div className="product-card__content">
-                            <p className="product-card__category">{product.category}</p>
+                    return (
+                        <article className="product-card" key={product.id}>
+                            <Link
+                                to={`/products/${product.id}`}
+                                className="product-card__image-wrapper"
+                            >
+                                <img
+                                    className="product-card__image"
+                                    src={product.thumbnail}
+                                    alt={product.title}
+                                />
+                            </Link>
 
-                            <h2 className="product-card__title">
-                                <Link to={`/products/${product.id}`}>{product.title}</Link>
-                            </h2>
+                            <div className="product-card__content">
+                                <p className="product-card__category">{product.category}</p>
 
-                            <p className="product-card__description">{product.description}</p>
+                                <h2 className="product-card__title">
+                                    <Link to={`/products/${product.id}`}>{product.title}</Link>
+                                </h2>
 
-                            <div className="product-card__footer">
-                                <span className="product-card__price">${product.price}</span>
-                                <span className="product-card__rating">⭐ {product.rating}</span>
+                                <p className="product-card__description">
+                                    {product.description}
+                                </p>
+
+                                <div className="product-card__footer">
+                                    <span className="product-card__price">${product.price}</span>
+                                    <span className="product-card__rating">
+                    ⭐ {product.rating}
+                  </span>
+                                </div>
+
+                                <button
+                                    className={
+                                        isFavorite
+                                            ? "favorite-button favorite-button_active"
+                                            : "favorite-button"
+                                    }
+                                    type="button"
+                                    onClick={() => dispatch(toggleFavorite(product.id))}
+                                >
+                                    {isFavorite ? "В избранном" : "В избранное"}
+                                </button>
                             </div>
-                        </div>
-                    </article>
-                ))}
+                        </article>
+                    );
+                })}
             </div>
         </section>
     );

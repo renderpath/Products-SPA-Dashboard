@@ -1,12 +1,22 @@
 import { Link, useParams } from "react-router-dom";
+import { toggleFavorite } from "../../features/favorites/favoritesSlice";
 import { useGetProductByIdQuery } from "../../shared/api/dummyJsonApi";
+import { useAppDispatch } from "../../shared/hooks/useAppDispatch";
+import { useAppSelector } from "../../shared/hooks/useAppSelector";
 
 export function ProductDetailsPage() {
     const { productId } = useParams();
 
+    const dispatch = useAppDispatch();
+    const favoriteIds = useAppSelector((state) => state.favorites.ids);
+
     const id = Number(productId);
 
-    const { data: product, isLoading, isError } = useGetProductByIdQuery(id, {
+    const {
+        data: product,
+        isLoading,
+        isError,
+    } = useGetProductByIdQuery(id, {
         skip: Number.isNaN(id),
     });
 
@@ -32,6 +42,8 @@ export function ProductDetailsPage() {
         );
     }
 
+    const isFavorite = favoriteIds.includes(product.id);
+
     return (
         <section className="product-details">
             <Link className="back-link" to="/products">
@@ -50,7 +62,9 @@ export function ProductDetailsPage() {
                 <div className="product-details__content">
                     <p className="page-label">{product.category}</p>
                     <h1>{product.title}</h1>
-                    <p className="product-details__description">{product.description}</p>
+                    <p className="product-details__description">
+                        {product.description}
+                    </p>
 
                     <div className="product-details__stats">
                         <div>
@@ -73,6 +87,18 @@ export function ProductDetailsPage() {
                             <strong>{product.discountPercentage}%</strong>
                         </div>
                     </div>
+
+                    <button
+                        className={
+                            isFavorite
+                                ? "favorite-button favorite-button_active product-details__favorite"
+                                : "favorite-button product-details__favorite"
+                        }
+                        type="button"
+                        onClick={() => dispatch(toggleFavorite(product.id))}
+                    >
+                        {isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
+                    </button>
                 </div>
             </div>
         </section>

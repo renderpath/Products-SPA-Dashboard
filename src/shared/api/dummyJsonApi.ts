@@ -1,5 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Product, ProductsResponse } from "../../entities/product/productTypes";
+import type {
+    Product,
+    ProductsResponse,
+} from "../../entities/product/productTypes";
 
 export const dummyJsonApi = createApi({
     reducerPath: "dummyJsonApi",
@@ -9,7 +12,7 @@ export const dummyJsonApi = createApi({
     tagTypes: ["Products"],
     endpoints: (builder) => ({
         getProducts: builder.query<ProductsResponse, void>({
-            query: () => "/products?limit=20",
+            query: () => "/products?limit=100",
             providesTags: ["Products"],
         }),
 

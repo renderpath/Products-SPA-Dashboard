@@ -1,66 +1,87 @@
-.favorite-button {
-    width: 100%;
-    margin-top: 18px;
-    padding: 12px 16px;
-    border: 1px solid #2563eb;
-    border-radius: 14px;
-    background: #ffffff;
-    color: #2563eb;
-    font-weight: 700;
-    cursor: pointer;
-    transition:
-            background 0.2s ease,
-            color 0.2s ease,
-            transform 0.2s ease;
-}
-
-.favorite-button:hover {
-    background: #2563eb;
-    color: #ffffff;
-    transform: translateY(-1px);
-}
-
-.favorite-button_active {
-    border-color: #f59e0b;
-    background: #f59e0b;
-    color: #111827;
-}
-
-.favorite-button_active:hover {
-    background: #d97706;
-    color: #111827;
-}
-
-.product-details__favorite {
-    width: auto;
-    min-width: 220px;
-    margin-top: 32px;
-}
-
-.empty-state {
-    max-width: 520px;
-    padding: 32px;
+.filters-panel {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 24px;
+    padding: 20px;
     border-radius: 24px;
     background: #ffffff;
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
-.empty-state h2 {
-    margin: 0 0 12px;
-    font-size: 28px;
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.empty-state p {
-    margin: 0 0 24px;
-    color: #6b7280;
-    line-height: 1.6;
+.filter-field span {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
 }
 
-.primary-link {
-    display: inline-flex;
-    padding: 12px 18px;
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
     border-radius: 14px;
-    background: #2563eb;
+    background: #ffffff;
+    color: #111827;
+    outline: none;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+.reset-button,
+.primary-button {
+    min-height: 44px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 14px;
+    background: #111827;
     color: #ffffff;
     font-weight: 700;
+    cursor: pointer;
+    transition:
+            transform 0.2s ease,
+            background 0.2s ease;
+}
+
+.reset-button:hover,
+.primary-button:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.products-summary {
+    margin-bottom: 20px;
+    color: #4b5563;
+}
+
+.products-summary strong {
+    color: #111827;
+}
+
+@media (max-width: 900px) {
+    .filters-panel {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .reset-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .filters-panel {
+        grid-template-columns: 1fr;
+    }
 }

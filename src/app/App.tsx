@@ -6,6 +6,7 @@ import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { NotFoundPage } from "../pages/NotFoundPage/NotFoundPage";
 import { ProductDetailsPage } from "../pages/ProductDetailsPage/ProductDetailsPage";
 import { ProductsPage } from "../pages/ProductsPage/ProductsPage";
+import { ProfilePage } from "../pages/ProfilePage/ProfilePage";
 import { useAppDispatch } from "../shared/hooks/useAppDispatch";
 import { useAppSelector } from "../shared/hooks/useAppSelector";
 
@@ -24,6 +25,8 @@ export function App() {
                     <nav className="nav">
                         <Link to="/products">Товары</Link>
                         <Link to="/favorites">Избранное</Link>
+
+                        {user && <Link to="/profile">Профиль</Link>}
 
                         {user ? (
                             <button
@@ -76,6 +79,15 @@ export function App() {
                             element={
                                 <ProtectedRoute>
                                     <FavoritesPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/profile"
+                            element={
+                                <ProtectedRoute>
+                                    <ProfilePage />
                                 </ProtectedRoute>
                             }
                         />

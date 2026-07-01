@@ -11,12 +11,7 @@ export function ProfilePage() {
     return (
         <section className="profile-page">
             <div className="page-heading">
-                <p className="page-label">Profile</p>
                 <h1>Профиль пользователя</h1>
-                <p>
-                    Данные пользователя получены через DummyJSON Auth и сохранены в Redux
-                    Toolkit.
-                </p>
             </div>
 
             <div className="profile-card">

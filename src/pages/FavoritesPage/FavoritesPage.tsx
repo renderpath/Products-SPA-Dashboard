@@ -29,12 +29,7 @@ export function FavoritesPage() {
     return (
         <section className="favorites-page">
             <div className="page-heading">
-                <p className="page-label">Favorites</p>
                 <h1>Избранное</h1>
-                <p>
-                    Здесь отображаются товары, которые были добавлены в избранное через
-                    Redux Toolkit.
-                </p>
             </div>
 
             {favoriteProducts.length === 0 ? (

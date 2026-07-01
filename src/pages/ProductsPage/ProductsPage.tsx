@@ -3,6 +3,7 @@ import { toggleFavorite } from "../../features/favorites/favoritesSlice";
 import {
     resetFilters,
     setCategory,
+    setPage,
     setSearch,
     setSort,
     type SortOption,
@@ -15,7 +16,9 @@ export function ProductsPage() {
     const dispatch = useAppDispatch();
 
     const favoriteIds = useAppSelector((state) => state.favorites.ids);
-    const { search, category, sort } = useAppSelector((state) => state.filters);
+    const { search, category, sort, page, pageSize } = useAppSelector(
+        (state) => state.filters,
+    );
 
     const { data, isLoading, isError } = useGetProductsQuery();
 
@@ -23,7 +26,7 @@ export function ProductsPage() {
 
     const categories = Array.from(
         new Set(products.map((product) => product.category)),
-    );
+    ).sort();
 
     const filteredProducts = products
         .filter((product) => {
@@ -55,6 +58,16 @@ export function ProductsPage() {
             }
         });
 
+    const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+    const currentPage = Math.min(page, totalPages);
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+
+    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+    const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
     if (isLoading) {
         return <p className="status-message">Загрузка товаров...</p>;
     }
@@ -69,17 +82,14 @@ export function ProductsPage() {
 
     return (
         <section className="products-page">
-            <div className="page-heading">
-                <p className="page-label">Dashboard</p>
-                <h1>Products</h1>
-                <p>
-                    Каталог товаров из DummyJSON API. Поиск, фильтрация и сортировка
-                    управляются через Redux Toolkit.
-                </p>
+            <div className="page-heading page-heading_with-actions">
+                <div>
+                    <h1>Каталог товаров</h1>
+                </div>
             </div>
 
             <div className="filters-panel">
-                <label className="filter-field">
+                <label className="filter-field filter-field_search">
                     <span>Поиск</span>
                     <input
                         type="search"
@@ -99,7 +109,7 @@ export function ProductsPage() {
 
                         {categories.map((categoryName) => (
                             <option value={categoryName} key={categoryName}>
-                                {categoryName}
+                                {categoryName.replace(/-/g, " ")}
                             </option>
                         ))}
                     </select>
@@ -130,13 +140,26 @@ export function ProductsPage() {
             </div>
 
             <div className="products-summary">
-                Найдено товаров: <strong>{filteredProducts.length}</strong>
+                {filteredProducts.length > 0 ? (
+                    <span>
+            Показано{" "}
+                        <strong>
+              {startIndex + 1}–{Math.min(endIndex, filteredProducts.length)}
+            </strong>{" "}
+                        из <strong>{filteredProducts.length}</strong> товаров
+          </span>
+                ) : (
+                    <span>
+            Найдено товаров: <strong>0</strong>
+          </span>
+                )}
             </div>
 
             {filteredProducts.length === 0 ? (
                 <div className="empty-state">
                     <h2>Товары не найдены</h2>
                     <p>Попробуй изменить поисковый запрос или сбросить фильтры.</p>
+
                     <button
                         className="primary-button"
                         type="button"
@@ -146,25 +169,67 @@ export function ProductsPage() {
                     </button>
                 </div>
             ) : (
-                <div className="products-grid">
-                    {filteredProducts.map((product) => {
-                        const isFavorite = favoriteIds.includes(product.id);
+                <>
+                    <div className="products-grid">
+                        {paginatedProducts.map((product) => {
+                            const isFavorite = favoriteIds.includes(product.id);
 
-                        return (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                isFavorite={isFavorite}
-                                favoriteButtonText={
-                                    isFavorite ? "В избранном" : "В избранное"
-                                }
-                                onFavoriteClick={(productId) =>
-                                    dispatch(toggleFavorite(productId))
-                                }
-                            />
-                        );
-                    })}
-                </div>
+                            return (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    isFavorite={isFavorite}
+                                    favoriteButtonText={
+                                        isFavorite ? "В избранном" : "В избранное"
+                                    }
+                                    onFavoriteClick={(productId) =>
+                                        dispatch(toggleFavorite(productId))
+                                    }
+                                />
+                            );
+                        })}
+                    </div>
+
+                    {totalPages > 1 && (
+                        <nav className="pagination" aria-label="Пагинация товаров">
+                            <button
+                                className="pagination__button"
+                                type="button"
+                                disabled={currentPage === 1}
+                                onClick={() => dispatch(setPage(currentPage - 1))}
+                            >
+                                Назад
+                            </button>
+
+                            <div className="pagination__pages">
+                                {pageNumbers.map((pageNumber) => (
+                                    <button
+                                        className={
+                                            pageNumber === currentPage
+                                                ? "pagination__button pagination__button_active"
+                                                : "pagination__button"
+                                        }
+                                        type="button"
+                                        key={pageNumber}
+                                        aria-current={pageNumber === currentPage ? "page" : undefined}
+                                        onClick={() => dispatch(setPage(pageNumber))}
+                                    >
+                                        {pageNumber}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                className="pagination__button"
+                                type="button"
+                                disabled={currentPage === totalPages}
+                                onClick={() => dispatch(setPage(currentPage + 1))}
+                            >
+                                Вперёд
+                            </button>
+                        </nav>
+                    )}
+                </>
             )}
         </section>
     );

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ProductCard } from "../../entities/product/ProductCard";
 import { removeFromFavorites } from "../../features/favorites/favoritesSlice";
 import { useGetProductsQuery } from "../../shared/api/dummyJsonApi";
 import { useAppDispatch } from "../../shared/hooks/useAppDispatch";
@@ -47,45 +48,15 @@ export function FavoritesPage() {
             ) : (
                 <div className="products-grid">
                     {favoriteProducts.map((product) => (
-                        <article className="product-card" key={product.id}>
-                            <Link
-                                to={`/products/${product.id}`}
-                                className="product-card__image-wrapper"
-                            >
-                                <img
-                                    className="product-card__image"
-                                    src={product.thumbnail}
-                                    alt={product.title}
-                                />
-                            </Link>
-
-                            <div className="product-card__content">
-                                <p className="product-card__category">{product.category}</p>
-
-                                <h2 className="product-card__title">
-                                    <Link to={`/products/${product.id}`}>{product.title}</Link>
-                                </h2>
-
-                                <p className="product-card__description">
-                                    {product.description}
-                                </p>
-
-                                <div className="product-card__footer">
-                                    <span className="product-card__price">${product.price}</span>
-                                    <span className="product-card__rating">
-                    ⭐ {product.rating}
-                  </span>
-                                </div>
-
-                                <button
-                                    className="favorite-button favorite-button_active"
-                                    type="button"
-                                    onClick={() => dispatch(removeFromFavorites(product.id))}
-                                >
-                                    Убрать из избранного
-                                </button>
-                            </div>
-                        </article>
+                        <ProductCard
+                            key={product.id}
+                            product={product}
+                            isFavorite={true}
+                            favoriteButtonText="Убрать из избранного"
+                            onFavoriteClick={(productId) =>
+                                dispatch(removeFromFavorites(productId))
+                            }
+                        />
                     ))}
                 </div>
             )}

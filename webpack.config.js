@@ -7,12 +7,13 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "bundle.[contenthash].js",
+        chunkFilename: "chunk.[contenthash].js",
         clean: true,
-        publicPath: "/"
+        publicPath: "/",
     },
 
     resolve: {
-        extensions: [".tsx", ".ts", ".js"]
+        extensions: [".tsx", ".ts", ".js"],
     },
 
     module: {
@@ -20,25 +21,45 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: "ts-loader",
-                exclude: /node_modules/
+                exclude: /node_modules/,
             },
             {
                 test: /\.css$/,
-                use: ["style-loader", "css-loader"]
-            }
-        ]
+                use: ["style-loader", "css-loader"],
+            },
+        ],
     },
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, "public", "index.html")
-        })
+            template: path.resolve(__dirname, "public", "index.html"),
+        }),
     ],
+
+    optimization: {
+        runtimeChunk: "single",
+        splitChunks: {
+            chunks: "all",
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendors",
+                    chunks: "all",
+                    priority: 10,
+                },
+            },
+        },
+    },
+
+    performance: {
+        maxAssetSize: 400000,
+        maxEntrypointSize: 400000,
+    },
 
     devServer: {
         port: 3000,
         historyApiFallback: true,
         open: true,
-        hot: true
-    }
+        hot: true,
+    },
 };
